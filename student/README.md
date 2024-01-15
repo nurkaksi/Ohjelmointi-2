@@ -1,9 +1,10 @@
-Tähän hakemistoon kopioit koodipohjat templates-hakemistosta tai luot
-uudet ohjelmointiprojektit.
-Tänne voit myös kopioida examples-hakemiston koodit.
+Tähän hakemistoon kurssin henkilökunta tallentaa koodipohjia harjoituksia
+varten.
 
--------------------------------------------------------
+ÄLÄ TEE TÄHÄN HAKEMISTOON MITÄÄN MUUTOKSIA!
 
-In this directory, you will copy template codes from the directory called
-templates, or create new programming projects.
-You can also copy codes from the examples directory here.
+-------------------------------------------
+
+In this directory, course personnel will store template codes for the exercises.
+
+DO NOT MAKE ANY MODIFICATIONS IN THIS DIRECTORY!
