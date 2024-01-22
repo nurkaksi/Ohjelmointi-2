@@ -8,7 +8,7 @@ int main()
     cin >> temperature;
 
     cout << temperature << " degrees Celcius is " << (temperature * 9 / 5) + 32 << " degrees Fahrenheit" << endl;
-    cout << temperature << " dehrees Fahrenheit is " << (temperature - 32)* 5 / 9 << " degrees Celcius" << endl;
+    cout << temperature << " degrees Fahrenheit is " << (temperature - 32)* 5 / 9 << " degrees Celcius" << endl;
 
 
     return 0;
