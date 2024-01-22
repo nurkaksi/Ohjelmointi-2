@@ -1,0 +1,15 @@
+#include <iostream>
+
+using namespace std;
+
+int main()
+{   double temperature = 0;
+    cout << "Enter a temperature: ";
+    cin >> temperature;
+    
+    cout << temperature << " degrees "
+    
+    
+
+    return 0;
+}
