@@ -11,7 +11,7 @@ int main()
     if (cube < 0) {
         cout << "The cube of " << number << " is not " << cube << "." << endl;
     }
-    else if (cube < 2147483647 and cube > 0) {
+    else if (cube < 2147483647 and cube >= 0) {
         cout << "The cube of " << number << " is " << cube << "." << endl;
     }
     else {
