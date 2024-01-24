@@ -22,6 +22,14 @@ int main()
         }
     }
 
+    for (char letter = 'a'; letter <= 'z'; ++letter ) {
+        if (key.find(letter) == string::npos) {
+            cout << "Error! The encryption key must contain all alphabets a-z."<< endl;
+            return EXIT_FAILURE;
+        }
+
+    }
+
     string text = "";
     cout << "Enter the text to be encrypted: ";
     cin >> text;
