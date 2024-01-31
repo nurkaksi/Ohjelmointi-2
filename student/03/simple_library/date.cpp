@@ -80,3 +80,4 @@ bool Date::is_leap_year() const
     // but not divisible by 100, unless it is divisible by 400
     return (year_ % 4 == 0) and ((year_ % 100 != 0) or (year_ % 400 == 0));
 }
+
