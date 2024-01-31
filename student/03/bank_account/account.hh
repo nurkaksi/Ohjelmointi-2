@@ -1,15 +1,21 @@
 #ifndef ACCOUNT_HH
 #define ACCOUNT_HH
-
 #include <string>
+using namespace std;
+
 
 class Account
 {
 public:
     // Constructor
-    Account(const std::string& owner, bool has_credit = false);
+    Account(const string& owner, bool has_credit = false);
 
-    // More methods
+    void print() const;
+    void set_credit_limit(int credit);
+    void save_money(int number);
+    bool take_money(int number);
+    void transfer_to(Account& to_account, int number);
+
 
 private:
     // Generates IBAN (based on running_number_ below).
@@ -23,7 +29,14 @@ private:
     // no own copies of it for each object of the class.
     static int running_number_;
 
-    // More attributes/methods
+    string owner_;
+    bool credit_card_;
+    string iban_;
+    bool has_credit_;
+    int account_money_;
+    int limit_;
+
 };
+
 
 #endif // ACCOUNT_HH
