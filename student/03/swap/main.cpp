@@ -1,8 +1,12 @@
 #include <cstdlib>
 #include <iostream>
 
-// Write your swap function here.
 
+void swap(int& i, int& j) {
+    int i_2 = i;
+    i = j;
+    j = i_2;
+}
 
 
 #ifndef UNIT_TESTING
