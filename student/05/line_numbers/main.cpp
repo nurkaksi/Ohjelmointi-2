@@ -16,8 +16,8 @@ int main()
     ifstream InputFile(InputFileName);
     if ( not InputFile ) {
             cout << "Error! The file "<< InputFileName <<" cannot be opened." << endl;
+            return EXIT_FAILURE;
         }
-    else {
         ofstream outputFile(OutputFileName);
 
         int LineNumber = 1;
@@ -27,7 +27,6 @@ int main()
             // Kirjoitetaan rivi tulostiedostoon rivinumeron kera
             outputFile << LineNumber << " " << line << endl;
             LineNumber++;
-        }
         InputFile.close();
         outputFile.close();
 
