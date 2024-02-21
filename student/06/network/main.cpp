@@ -68,6 +68,20 @@ int count(Network& web, std::string& id){
     return size;
 }
 
+int depth(Network& web, std::string id){
+    int max_depth = 0;
+    if (web.find(id) != web.end()){
+        for(std::string child : web.at(id)){
+        int child_depth = depth(web, child);
+        max_depth = std::max(max_depth, child_depth);
+        }
+    }
+    else {
+        return max_depth +1;
+    }
+    return max_depth +1;
+}
+
 int main()
 {
     // TODO: Implement the datastructure here
@@ -135,7 +149,7 @@ int main()
             }
             std::string id = parts.at(1);
 
-            // TODO: Implement the command here!
+            std::cout<< depth(web, id) <<std::endl;
 
         }
         else if(command == "Q" or command == "q")
