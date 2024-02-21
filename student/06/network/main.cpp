@@ -52,7 +52,7 @@ void print(Network& web, std::string& id, int merkki =0) {
     std::cout<< id << std::endl;
 
     if(web.find(id) != web.end()){
-        for(std:: string child : web[id]){
+        for(std:: string child : web.at(id)){
             print(web, child, merkki+1);
         }
     }
@@ -101,7 +101,7 @@ int main()
             }
             std::string id = parts.at(1);
 
-            // TODO: Implement the command here!
+            print(web, id);
 
         }
         else if(command == "C" or command == "c")
