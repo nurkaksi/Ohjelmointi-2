@@ -57,6 +57,16 @@ void print(Network& web, std::string& id, int merkki =0) {
         }
     }
 }
+int count(Network& web, std::string& id){
+    int size = 0;
+    if (web.find(id) != web.end()) {
+        for (std::string child : web.at(id)){
+            ++size;
+            size += count(web, child);
+        }
+    }
+    return size;
+}
 
 int main()
 {
@@ -113,7 +123,7 @@ int main()
             }
             std::string id = parts.at(1);
 
-            // TODO: Implement the command here!
+            std::cout<< count(web, id) <<std::endl;
 
         }
         else if(command == "D" or command == "d")
