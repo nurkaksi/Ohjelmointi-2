@@ -14,6 +14,7 @@ void print_vertical(unsigned int num)
         cout << num << endl;
         return;
     }
+    // funktio kutsuu itseään ja jakaa luvun kymmenellä, kunnes saadaan yksittäinen luku
     print_vertical(num/10);
     cout << num % 10 << endl;
 }

@@ -41,9 +41,6 @@ int main()
         for ( auto entry : players ) {
             cout << entry.first << ": " << entry.second << endl;
         }
-
-
-
     }
 
     open_file.close();
