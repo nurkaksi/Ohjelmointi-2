@@ -92,6 +92,142 @@ vector<string> split(const string& s, const char delimiter, bool ignore_empty = 
 }
 
 
+/// Tulostaa kurssitarjottimen paikkakunnat aakkosjärjestyksessä
+void tulosta_paikkakunnat(const map<string, map<string, map<Kurssi, int>>>& kurssitarjotin) {
+    // Käytetään set-rakennetta, jotta paikkakunnat ovat automaattisesti järjestyksessä
+    set<string> paikkakunnat;
+
+    // Collecting all locations from the data
+    for (const auto& paikkatiedot : kurssitarjotin) {
+        paikkakunnat.insert(paikkatiedot.first);
+    }
+
+    // Printing locations in alphabetical order
+    for (const auto& paikka : paikkakunnat) {
+        cout << paikka << endl;
+    }
+}
+
+/// Funktio tulostaa kaikki tarjolla olevat teemat
+/// halutulla paikkakunnalla
+void paikkakunta_teemat(map<string, map<string, map<Kurssi, int>>>& kurssitarjotin,
+                        const string& paikka) {
+    if (kurssitarjotin.find(paikka) == kurssitarjotin.end()) {
+        cout << "Error: unknown location" << endl;
+        return;
+    }
+
+    set<string> teemat;
+
+    const auto& paikkatiedot = kurssitarjotin.at(paikka);
+    for (const auto& teema_data : paikkatiedot) {
+        teemat.insert(teema_data.first);
+    }
+
+    for (const auto& teema : teemat) {
+        cout << teema << endl;
+    }
+}
+
+
+
+/// Funktio tulostaa tarjolla olevat kurssit halutusta teemasta
+/// halutulla paikkakunnalla
+void kurssit_paikka_ja_teema(map<string, map<string, map<Kurssi, int>>>& kurssitarjotin,
+                                    const string& paikka, const string& teema) {
+
+    // Tarkistetaan löytyykö paikkakunta
+    if (kurssitarjotin.find(paikka) == kurssitarjotin.end()) {
+        cout << "Error: unknown location" << endl;
+        return;
+    }
+
+    // Tarkistetaan löytyykö teema paikkakunnalta
+    const auto& paikkatiedot = kurssitarjotin.at(paikka);
+    if (paikkatiedot.find(teema) == paikkatiedot.end()) {
+        cout << "Error: unknown theme" << endl;
+        return;
+    }
+
+    const auto& teema_data = paikkatiedot.at(teema);
+
+    // Tulostetaan kurssit aakkosjärjestyksessä
+    for (const auto& [kurssi, osallistujat] : teema_data) {
+        string osallistujatiedot = (osallistujat == 50) ? "full" : to_string(osallistujat) + " enrollments";
+        cout << kurssi.nimi << " --- " << osallistujatiedot << endl;
+    }
+}
+
+/// Funktio tulostaa listan kaikista kursseista, joissa on tilaa
+void vapaat_kurssit(map<string, map<string, map<Kurssi, int>>>& kurssitarjotin) {
+    for (const auto& [paikka, teemat] : kurssitarjotin) {
+        for (const auto& [teema, kurssit] : teemat) {
+            for (const auto& [kurssi, enrollment] : kurssit) {
+                if (enrollment < 50) {
+                    cout << paikka << " : " << teema << " : " << kurssi.nimi << endl;
+                }
+            }
+        }
+    }
+}
+
+/// Funktio tulostaa kaikki kurssit tietystä teemasta
+void teema_kurssit(map<string, map<string, map<Kurssi, int>>>& kurssitarjotin,
+                   const string& teema) {
+
+    vector<string> kurssit;
+    for (const auto& [paikka, teemat] : kurssitarjotin) {
+
+        if (teemat.find(teema) != teemat.end()) {
+            for (const auto& [course, enrollment] : teemat.at(teema)) {
+                kurssit.push_back(course.nimi);
+            }
+        }
+    }
+    sort(kurssit.begin(), kurssit.end());
+
+    for (const auto& kurssi : kurssit) {
+        cout << kurssi << endl;
+    }
+}
+
+/// Funktio tulostaa suosituimman teeman osallistujamäärän mukaan
+/// ja ilmoittaa koko teeman yhteenlasketun osallistujamäärän
+void suosikkiteema(map<string, map<string, map<Kurssi, int>>>& kurssitarjotin) {
+
+    // Tallennetaan osallistujamäärät
+    map<string, int> teema_osallistujat;
+
+    //Iteratiivinen rakenne, jonka avulla käydään läpi osallistujamäärät
+    for (const auto& [paikat, teemat] : kurssitarjotin) {
+        for (const auto& [teema, kurssit] : teemat) {
+            for (const auto& [kurssi, osallistujat] : kurssit) {
+                teema_osallistujat[teema] += (osallistujat == 50) ? 50 : osallistujat;
+            }
+        }
+    }
+
+    // Jos osallistujia ei ole, tulostetaan siitä tieto
+    if (teema_osallistujat.empty()) {
+        cout << "No enrollments" << endl;
+        return;
+    }
+
+    // Etsitään maksimiosallistujamäärä ja tulostetaan se
+    int osallistujat_max = 0;
+    for (const auto& [teema, osallistujat] : teema_osallistujat) {
+        osallistujat_max = max(osallistujat_max, osallistujat);
+    }
+
+    cout << osallistujat_max << " enrollments in themes" << endl;
+    for (const auto& [teema, osallistujat] : teema_osallistujat) {
+        if (osallistujat == osallistujat_max) {
+            cout << "--- " << teema << endl;
+        }
+    }
+}
+
+
 
 int main() {
 
