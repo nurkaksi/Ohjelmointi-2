@@ -113,7 +113,7 @@ void tulosta_paikkakunnat(const map<string, map<string, map<Kurssi, int>>>& kurs
 void paikkakunta_teemat(map<string, map<string, map<Kurssi, int>>>& kurssitarjotin,
                         const string& paikka) {
     if (kurssitarjotin.find(paikka) == kurssitarjotin.end()) {
-        cout << "Error: unknown location" << endl;
+        cout << "Error: unknown location name" << endl;
         return;
     }
 
@@ -158,18 +158,20 @@ void kurssit_paikka_ja_teema(map<string, map<string, map<Kurssi, int>>>& kurssit
     }
 }
 
-/// Funktio tulostaa listan kaikista kursseista, joissa on tilaa
+/// Funktio tulostaa listan kaikista kursseista, joilla on tilaa
 void vapaat_kurssit(map<string, map<string, map<Kurssi, int>>>& kurssitarjotin) {
     for (const auto& [paikka, teemat] : kurssitarjotin) {
         for (const auto& [teema, kurssit] : teemat) {
             for (const auto& [kurssi, enrollment] : kurssit) {
                 if (enrollment < 50) {
                     cout << paikka << " : " << teema << " : " << kurssi.nimi << endl;
+                    break;
                 }
             }
         }
     }
 }
+
 
 /// Funktio tulostaa kaikki kurssit tietystä teemasta
 void teema_kurssit(map<string, map<string, map<Kurssi, int>>>& kurssitarjotin,
@@ -182,6 +184,10 @@ void teema_kurssit(map<string, map<string, map<Kurssi, int>>>& kurssitarjotin,
             for (const auto& [course, enrollment] : teemat.at(teema)) {
                 kurssit.push_back(course.nimi);
             }
+        }
+        else {
+            cout << "Error: unknown theme" <<endl;
+            break;
         }
     }
     sort(kurssit.begin(), kurssit.end());
@@ -280,7 +286,19 @@ int main() {
 
         // Tallennetaan rivin tiedot ensin kurssiin, sitten kurssitarjottimeen
         Kurssi kurssi{nimi, teema, osallistujien_maara};
-        kurssitarjotin[paikkakunta][teema][kurssi] = osallistujien_maara;
+
+        // Tarkistetaan onko kyseinen kurssi jo tallennettu samalle paikkakunnalle ja teemalle
+        auto& paikkakunta_teema = kurssitarjotin[paikkakunta][teema];
+        auto it = paikkakunta_teema.find(kurssi);
+
+        if (it != paikkakunta_teema.end()) {
+            // Jos kurssi on jo tallennettu, päivitetään sen tiedot
+            it->second = osallistujien_maara;
+        } else {
+            // Jos ei, lisätään kurssi kurssitarjottimeen
+            paikkakunta_teema[kurssi] = osallistujien_maara;
+        }
+
     }
 
 
@@ -322,13 +340,15 @@ int main() {
             if (parts.size() != 2) {
                 cout << "Error: error in command courses" << endl;
             } else {
-                // tarkistetaan onko lainausmerkit ja poistetaan ne tarvittaessa
+                // Poistetaan lainausmerkit, jos ne ovat läsnä
                 if (parts[1].front() == '"' && parts[1].back() == '"') {
                     parts[1] = parts[1].substr(1, parts[1].size() - 2);
                 }
                 kurssit_paikka_ja_teema(kurssitarjotin, parts[0], parts[1]);
             }
         }
+
+
 
         else if ( komento == "available" && komento2 == "")
         {
