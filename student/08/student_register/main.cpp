@@ -4,28 +4,30 @@
 #include <vector>
 #include <map>
 
-const std::string HELP_TEXT = "N                  = List ordered by student numbers\n"
+using namespace std;
+
+const string HELP_TEXT =      "N                  = List ordered by student numbers\n"
                               "U                  = List ordered alphabetically by user ids\n"
                               "C <student_number> = Change the given student's phone number\n"
                               "Q                  = Quit\n";
 
 struct Student {
-    std::string student_number;
-    std::string user_id;
-    std::string name;
-    std::string phone_number;
-    std::string email;
-    std::string skype;
+    string student_number;
+    string user_id;
+    string name;
+    string phone_number;
+    string email;
+    string skype;
 };
 
-std::vector<std::string> split(const std::string& s,
+vector<string> split(const string& s,
                                const char delimiter,
                                const bool ignore_empty = false) {
-    std::vector<std::string> result;
-    std::string tmp = s;
+    vector<string> result;
+    string tmp = s;
 
-    while(tmp.find(delimiter) != std::string::npos) {
-        std::string new_part = tmp.substr(0, tmp.find(delimiter));
+    while(tmp.find(delimiter) != string::npos) {
+        string new_part = tmp.substr(0, tmp.find(delimiter));
         tmp = tmp.substr(tmp.find(delimiter)+1, tmp.size());
         if(not (ignore_empty and new_part.empty())) {
             result.push_back(new_part);
@@ -38,18 +40,18 @@ std::vector<std::string> split(const std::string& s,
 }
 
 
-bool read_data(const std::string& file_name,
-               std::map< std::string, Student* >& alphabetical_order,
-               std::map< std::string, Student* >& numerical_order) {
-    std::ifstream file_object(file_name);
+bool read_data(const string& file_name,
+               map< string, Student* >& alphabetical_order,
+               map< string, Student* >& numerical_order) {
+    ifstream file_object(file_name);
     if( !file_object ) {
         return false;
     }
 
-    std::string line = "";
+    string line = "";
 
     while( getline( file_object, line ) ) {
-        std::vector<std::string> parts = split(line, ';');
+        vector<string> parts = split(line, ';');
         if(parts.size() != 6) {
             return false;
         }
@@ -69,31 +71,32 @@ bool read_data(const std::string& file_name,
 
 
 void print_data(const Student& s) {
-    std::cout << s.student_number << " " << s.user_id << std::endl
-              << s.name << std::endl
-              << s.phone_number << std::endl
-              << s.email << std::endl
-              << s.skype << std::endl << std::endl;
+    cout << s.student_number << " " << s.user_id << endl
+              << s.name << endl
+              << s.phone_number << endl
+              << s.email << endl
+              << s.skype << endl << endl;
 }
 
-bool is_valid_phone_number(const std::string number) {
+bool is_valid_phone_number(const string number) {
     for(unsigned int i = 0; i < number.length(); ++i) {
         if(!(('0' <= number[i] and number[i] <= '9')
              or number[i] == ' '
              or number[i] == '-')) {
             std::cout << "Erroneous phone number: "
                       << number
-                      << std::endl << std::endl;
+                      << endl << endl;
             return false;
         }
     }
     return true;
 }
 
-bool write_data(const std::string& file_name,
-                std::map< std::string, Student* >& students)
+
+bool write_data(const string& file_name,
+                map< string, Student* >& students)
 {
-    std::ofstream file_object(file_name);
+    ofstream file_object(file_name);
     if ( !file_object )
     {
         return false;
@@ -105,42 +108,43 @@ bool write_data(const std::string& file_name,
                     << (pair.second)->name << ";"
                     << (pair.second)->phone_number << ";"
                     << (pair.second)->email << ";"
-                    << (pair.second)->skype << std::endl;
+                    << (pair.second)->skype << endl;
     }
 
     file_object.close();
         return true;
 }
 
-int main() {
-    std::string file_name = "";
-    std::cout << "Student file: ";
-    std::getline(std::cin, file_name);
 
-    std::map< std::string, Student* > user_ids;
-    std::map< std::string, Student* > student_numbers;
+int main() {
+    string file_name = "";
+    cout << "Student file: ";
+    getline(cin, file_name);
+
+    map< string, Student* > user_ids;
+    map< string, Student* > student_numbers;
     if(not read_data(file_name, user_ids, student_numbers)) {
-        std::cout << "Error in reading file!" << std::endl;
+        cout << "Error in reading file!" << endl;
         return EXIT_FAILURE;
     }
 
-    std::cout << HELP_TEXT << std::endl;
+    cout << HELP_TEXT << endl;
 
     while(true) {
-        std::string line;
-        std::cout << "register> ";
-        getline(std::cin, line);
-        std::vector<std::string> parts = split(line, ' ', true);
+        string line;
+        cout << "register> ";
+        getline(cin, line);
+        vector<string> parts = split(line, ' ', true);
 
         if(parts.empty()) {
             continue;
         }
-        std::string command = parts.at(0);
+        string command = parts.at(0);
 
         // Printing in alphabetical order by user ids
         if(command == "U" or command == "u") {
             if(parts.size() != 1) {
-                std::cout << "Erroneous parameters!" << std::endl  << HELP_TEXT;
+                cout << "Erroneous parameters!" << endl  << HELP_TEXT;
                 continue;
             } else {
                 for(auto pair: user_ids) {
@@ -151,7 +155,7 @@ int main() {
             // Printing in numerical order by student numbers
         } else if(command == "N" or command == "n") {
             if(parts.size() != 1){
-                std::cout << "Erroneous parameters!" << std::endl << HELP_TEXT;
+                cout << "Erroneous parameters!" << endl << HELP_TEXT;
                 continue;
             } else {
                 for(auto pair: student_numbers) {
@@ -162,23 +166,22 @@ int main() {
             // Changing student data
         } else if(command == "C" or command == "c") {
             if(parts.size() != 2){
-                std::cout << "Erroneous parameters!" << std::endl << HELP_TEXT;
+                cout << "Erroneous parameters!" << endl << HELP_TEXT;
                 continue;
             }
-            // TODO: Add functionality here
-            std::string id = parts.at(1);
+
+            string id = parts.at(1);
             if ( student_numbers.find(id) == student_numbers.end())
             {
-                std::cout << "There is no student with the given number!" << std::endl;
+                cout << "There is no student with the given number!" << endl << endl;
                 continue;
             }
+            string new_phone_number = "";
+            cout << "Enter a new phone number: ";
+            getline(cin, new_phone_number);
+            cout << endl;
 
-            std::string new_phone_number = "";
-            std::cout << "Enter new pone number: "<<std::endl;
-            getline(std::cin, new_phone_number);
-            std::cout<<std::endl;
-
-            if ( is_valid_phone_number(new_phone_number) )
+            if ( is_valid_phone_number(new_phone_number))
             {
                 student_numbers.at(id)->phone_number = new_phone_number;
                 write_data(file_name, user_ids);
@@ -200,9 +203,10 @@ int main() {
 
             return EXIT_SUCCESS;
         } else {
-            std::cout << "Erroneous command!" << std::endl << HELP_TEXT;
+            cout << "Erroneous command!" << endl << HELP_TEXT;
         }
     }
 }
+
 
 
