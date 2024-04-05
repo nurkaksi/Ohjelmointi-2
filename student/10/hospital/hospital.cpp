@@ -178,11 +178,85 @@ void Hospital::leave(Params params)
 void Hospital::assign_staff(Params params)
 {
 
+    std::string staff_id = params.at(0);
+    std::string patient_id = params.at(1);
+
+    // Jos henkilökunnan jäsentä ei löydy
+    if ( staff_.find(staff_id) == staff_.end() )
+    {
+        std::cout << "Error: Can't find anything matching: " << staff_id
+                  << std::endl;
+        return;
+    }
+
+    // Jos potilasta ei löydy
+    if ( this->current_patients_.find(patient_id) == this->current_patients_.end() )
+    {
+        std::cout << "Error: Can't find anything matching: " << patient_id
+                  << std::endl;
+        return;
+    }
+
+    // Lisää henkilökuntaa hoitojaksolle
+    CarePeriod* care_period = get_open_period(patient_id);
+    care_period->add_staff(staff_id, staff_[staff_id]);
+
+    std::cout << "Staff assigned for: " << patient_id << std::endl;
 }
 
+
+/// Tulostaa potilaan tiedot
 void Hospital::print_patient_info(Params params)
 {
+    std::string patient_id = params.at(0);
 
+    // Jos potilaan tietoja ei löydy (potilas
+    // ei ole ollut sairaalassa)
+    if ( this->all_patients_.find(patient_id) == this->all_patients_.end() )
+    {
+        std::cout << "Error: Can't find anything matching: " << patient_id
+                  << std::endl;
+        return;
+    }
+
+    // Tallennetaan hoitojaksot vektoriin ja tulostetaan
+    std::vector<CarePeriod*> patient_periods = get_patients_periods(patient_id);
+
+    for ( auto& period : patient_periods )
+    {
+        std::cout << "* Care period: ";
+        period->print_dates();
+
+        std::cout << "  - Staff:";
+        if ( period->get_staff_().empty() )
+        {
+            std::cout << " None" << std::endl;
+        }
+        else
+        {
+            for ( auto& staff : period->get_staff_() )
+            {
+                std::cout << " " << staff.first;
+            }
+            std::cout << std::endl;
+        }
+    }
+
+    std::cout << "* Medicines:";
+
+    if ( patient_periods[0]->get_patient()->get_medicines().empty())
+    {
+        std::cout << " None" << std::endl;
+    }
+    else
+    {
+        for ( auto period : patient_periods )
+        {
+            period->get_patient()->print_medicines("  - ");
+            break;
+        }
+    }
+    return;
 }
 
 void Hospital::print_care_periods(Params params)
