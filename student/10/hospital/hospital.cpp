@@ -261,12 +261,62 @@ void Hospital::print_patient_info(Params params)
 
 void Hospital::print_care_periods(Params params)
 {
+    bool found = false;
+    std::string staff_id = params.at(0);
 
+    // Henkilökunnan jäsentä ei löydy
+    if ( this->staff_.find(staff_id) == this->staff_.end() )
+    {
+        std::cout << "Error: Can't find anything matching: " << staff_id
+                  << std::endl;
+        return;
+    }
+
+    // Tulostaa hoitojakson ja potilaan
+    for ( auto period : care_periods_ )
+    {
+        if (period->get_staff_().find(staff_id) != period->get_staff_().end())
+        {
+            period->print_dates();
+            std::cout << "* Patient: " << period->get_patient()->get_id()
+                      << std::endl;
+            found = true;
+        }
+    }
+
+    // Jos henkilökunnan jäsenellä ei ole potilaita
+    if ( !found )
+    {
+        std::cout << "None" << std::endl;
+    }
 }
 
 void Hospital::print_all_medicines(Params)
 {
+    bool medicines_prescriped = false;
 
+    // Lääkkeet ja potilaat tallennetaan map-tietorakenteeseen
+    std::map<std::string, std::vector<std::string>> patients_medicines =
+            medicines_();
+
+    for ( auto& medicine : patients_medicines )
+    {
+         std::cout << medicine.first << " prescribed for" << std::endl;
+         std::vector<std::string> patients = medicine.second;
+         std::sort(patients.begin(), patients.end());
+
+         for (const auto& patient : patients)
+         {
+             std::cout << "* " << patient << std::endl;
+         }
+         medicines_prescriped = true;
+    }
+
+    // Ei määrättyjä lääkkeitä
+    if ( !medicines_prescriped )
+    {
+        std::cout << "None" << std::endl;
+    }
 }
 
 void Hospital::print_all_patients(Params)
