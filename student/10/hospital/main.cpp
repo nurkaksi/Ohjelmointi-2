@@ -1,36 +1,50 @@
 /**
  * HOSPITAL
  *
- * Tämä ohjelma on sairaalajärjestelmä, jossa potilaita otetaan vastaan ja kotiutetaan
-ja henkilökuntaa rekrytoidaan ja lisätään potilaiden hoitojaksoihin.
-Potilaat voivat tulla ja lähteä hoitojaksolta useita kertoja.
-Potilaat voivat saada lääkkeitä tai niitä voidaan poistaa heiltä.
-
-Saatavilla olevat komennot ovat:
-  - HELP H: Tulostaa kaikki saatavilla olevat komennot
-  - RECRUIT R: Rekrytoi henkilökunnan jäsen (tarvitsee nimen komennon perään)
-  - ENTER E: Kirjaa potilas hoitojaksolle (tarvitsee nimen komennon perään)
-  - LEAVE L: Kirjaa potilas ulos ja sulkee hoitojakson (tarvitsee potilaan nimen komennon perään)
-  - ASSIGN_STAFF AS: Määritä henkilökunta potilaan hoitojaksolle (tarvitsee henkilökunnan nimen ja potilaan nimen)
-  - ADD_MEDICINE AM: Lisää lääke potilaalle (tarvitsee lääkkeen nimen, vahvuuden, annoksen ja potilaan nimen)
-  - REMOVE_MEDICINE RM: Poista lääke potilaalta (tarvitsee lääkkeen nimen ja potilaan nimen)
-  - PRINT_PATIENT_INFO PPI: Tulostaa yhden potilaan hoitojaksot, henkilökunnan ja lääkkeet (tarvitsee potilaan nimen)
-  - PRINT_CARE_PERIODS PCPS: Tulostaa hoitojaksot ja potilaat, joissa henkilökunta on (tarvitsee henkilökunnan nimen)
-  - PRINT_ALL_MEDICINES PAM: Tulosta kaikki lääkkeet ja kenelle niitä on määrätty
-  - PRINT_ALL_STAFF PAS:
-  - PRINT_ALL_PATIENTS PAP: Tulosta kaikki sairaalassa olleet potilaat, heidän hoitojaksonsa, henkilökunta ja lääkkeet
-  - PRINT_CURRENT_PATIENTS PCP: Tulosta tiedot potilaista, jotka ovat tällä hetkellä sairaalassa, heidän avoimesta hoitojaksostaan, henkilökunnasta ja lääkkeistä
-  - SET_DATE SD: Aseta uusi päivämäärä (tarvitsee päivän, kuukauden ja vuoden)
-  - ADVANCE_DATE: Siirrä päivämäärää eteenpäin (tarvitsee numeron, kuinka monta päivää mennään eteenpäin)
-  - READ_FROM RF: Lue tiedosto (tarvitsee tiedoston nimen)
-  - QUIT Q: Lopeta ohjelma
+ *  This program is a hospital system where patients are admitted in and out
+ *  and staff are recruited and added to patients care periods.
+ *  Patients can come and leave from a care period multiple times.
+ *  Patients can get medicine or it can be removed from them.
+ *
+ *  The commands available are:
+ *    - HELP H: Prints all the commands available
+ *    - RECRUIT R: Recruit a staff member (needs a name behind the command)
+ *    - ENTER E: Sign in a patient to a care period
+ *      (needs a name behind the command)
+ *    - LEAVE L: Sing out a patient and close the care period
+ *      (needs patients name behind the command)
+ *    - ASSIGN_STAFF AS: Assign staff to a patients care period
+ *      (needs staff name and patient name)
+ *    - ADD_MEDICINE AM: Add medicine to patient
+ *      (needs medicine name, strength, dosage and patient name)
+ *    - REMOVE_MEDICINE RM: Remove medicine from patient
+ *      (needs medicine name and patient name)
+ *    - PRINT_PATIENT_INFO PPI: Print one patients care periods, staff
+ *      and medicine (needs patient name)
+ *    - PRINT_CARE_PERIODS PCPS: Prints care periods and patients the staff
+ *      is in (needs staff name)
+ *    - PRINT_ALL_MEDICINES PAM: Print all medicines and who it has been
+ *      prescripted to
+ *    - PRINT_ALL_STAFF PAS:
+ *    - PRINT_ALL_PATIENTS PAP: Print all patients ever been in hospital,
+ *      their care periods, staff and medicine
+ *    - PRINT_CURRENT_PATIENTS PCP: Print patients info that are currently in
+ *      the hospital, their open care period, staff and medicine
+ *    - SET_DATE SD: Set a new date (needs day month year)
+ *    - ADVANCE_DATE: Advance date forward (needs number how many days
+ *      to go forward)
+ *    - READ_FROM RF: Read from file (needs a file name)
+ *    - QUIT Q: Quit program
  *
  * Program author
- * Name: Sara Nurminen
- * Student ID: 50224946
- * Username: vhsanu
- * E-Mail: sara.nurminen@tuni.fi
+ * Name: Lotta Luomajärvi
+ * Student ID: 152038946
+ * Username: qhlolu
+ * E-Mail: lotta.luomajarvi@tuni.fi
  * */
+
+
+
 #include "cli.hh"
 #include "hospital.hh"
 #include <string>

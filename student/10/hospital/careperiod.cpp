@@ -1,95 +1,65 @@
-/* Class CarePeriod
- * ----------
- * COMP.CS.110 SPRING 2024
- * ----------
- * Class for describing a patient's care period in hospital.
- *
- * Note: Students need to implement almost all of this class by themselves.
- * */
-#ifndef CAREPERIOD_HH
-#define CAREPERIOD_HH
+#include "careperiod.hh"
+#include <iostream>
 
-#include "person.hh"
-#include "date.hh"
-#include <string>
-
-class CarePeriod
+CarePeriod::CarePeriod(const std::string& start, Person* patient):
+    patient_(patient), start_(start)
 {
-public:
-    /**
-      * @brief CarePeriod
-      * @param alkamispäivämäärä stringinä (ddmmyyyy)
-      * @param potilas jolle luodaan hoitojakso
-      */
-    CarePeriod(const std::string& start, Person* patient);
+}
 
-    /**
-      * @brief CarePeriod
-      * @param alkamispäivämäärä annettu date-oliona
-      * @param potilas jolle hoitojakso luodaan
-      */
-    CarePeriod(const Date& start, Person* patient);
+CarePeriod::CarePeriod(const Date &start, Person* patient):
+    patient_(patient), start_(start)
+{
+}
 
-    /**
-      * @brief destructor
-      */
-    ~CarePeriod();
-
-    /**
-     * @brief add_staff
-     * @param staff_id
-     * @param henkilökunta
-     * Lisää henkilökuntaa hoitojaksoon
-     */
-    void add_staff(std::string staff_id, Person* staff);
-
-    // is_staff(Person* staff) onko joku tietty henkilö työskennellyt täällä
-
-    /**
-     * @brief set_end_date
-     * @param end
-     * Aseta loppumispäivä kun potilas lähtee
-     */
-    void set_end_date(const Date& end);
-
-    /**
-     * @brief get_patient
-     * @return potilas
-     */
-    Person *get_patient();
-
-    /**
-     * @brief get_care_period_start_time
-     * @return hoitojakson alkamispäivä
-     */
-    Date get_care_period_start_time();
-
-    /**
-     * @brief get_care_period_end_time
-     * @return hoitojakson päättymispäivä
-     */
-    Date get_care_period_end_time();
-
-    /**
-     * @brief get_staff_
-     * @return potilaan henkilökunta
-     */
-    std::map<std::string, Person*> get_staff_();
-
-    /**
-     * @brief print_dates
-     * Tulostaa hoitojakson päivämäärät
-     */
-    void print_dates();
+CarePeriod::~CarePeriod()
+{
+}
 
 
-private:
-    Person* patient_;
-    Date start_;
-    Date end_;
+void CarePeriod::add_staff(std::string staff_id, Person* staff)
+{
+    this->staff_.insert(std::make_pair(staff_id,staff));
+}
 
-    std::map<std::string, Person*> staff_;
+void CarePeriod::set_end_date(const Date &end)
+{
+    this->end_ = end;
+}
 
-};
+Person *CarePeriod::get_patient()
+{
+    return this->patient_;
+}
 
-#endif // CAREPERIOD_HH
+Date CarePeriod::get_care_period_start_time()
+{
+    return this->start_;
+}
+
+Date CarePeriod::get_care_period_end_time()
+{
+    return this->end_;
+}
+
+std::map<std::string, Person *> CarePeriod::get_staff_()
+{
+    return this->staff_;
+}
+
+void CarePeriod::print_dates()
+{
+    this->start_.print();
+    std::cout << " -";
+
+    if ( this->end_.is_default() )
+    {
+        std::cout << std::endl;
+    }
+    else
+    {
+        std::cout << " ";
+        this->end_.print();
+        std::cout << std::endl;
+    }
+}
+

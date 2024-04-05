@@ -93,7 +93,8 @@ void Hospital::print_all_staff(Params)
         std::cout << "None" << std::endl;
         return;
     }
-    for( std::map<std::string, Person*>::const_iterator iter = staff_.begin();
+    for( std::map<std::string, Person*>::const_iterator
+         iter = staff_.begin();
          iter != staff_.end();
          ++iter )
     {
@@ -144,39 +145,38 @@ void Hospital::enter(Params params)
     std::string patient_id = params.at(0);
 
 
-        // Potilaalla on jo käynnissä oleva hoitojakso
+    // Patient is already in a careperiod
+    if ( this->current_patients_.find(patient_id) != this->current_patients_.end())
+    {
+        std::cout << "Error: Already exists: " << patient_id << std::endl;
+        return;
+    }
 
-        if ( this->current_patients_.find(patient_id) != this->current_patients_.end())
-        {
-            std::cout << "Error: Already exists: " << patient_id << std::endl;
-            return;
-        }
+    // Has patient already been in the hospital, if not = add
+    if ( this->all_patients_.find(patient_id) == this->all_patients_.end())
+    {
+        this->all_patients_[patient_id] = new Person(patient_id);
+    }
 
-        // Tarkistetaan onko potilas jo ollut sairaalassa,
-        // jos ei, niin soritetaan add
-
-        if ( this->all_patients_.find(patient_id) == this->all_patients_.end())
-        {
-            this->all_patients_[patient_id] = new Person(patient_id);
-        }
-
-        // Lisätään henkilö current_patients tietoihin ja luodaan uusi hoitojakso
-        Person* new_patient = this->all_patients_.find(patient_id)->second;
-        this->current_patients_[patient_id] = new_patient;
+    // Adding to current patients and creating a new careperiod
+    Person* new_patient = this->all_patients_.find(patient_id)->second;
+    this->current_patients_[patient_id] = new_patient;
 
 
-        CarePeriod* care_period = new CarePeriod(utils::today, new_patient);
-        this->care_periods_.push_back(care_period);
+    CarePeriod* care_period = new CarePeriod(utils::today, new_patient);
+    this->care_periods_.push_back(care_period);
 
-        std::cout << "A new patient has entered." << std::endl;
+    std::cout << "A new patient has entered." << std::endl;
+
 
 }
+
 
 void Hospital::leave(Params params)
 {
     std::string patient_id = params.at(0);
 
-    // Potilasta ei löydy
+    // No patient found
     if ( this->current_patients_.find(patient_id) == this->current_patients_.end() )
     {
         std::cout << "Error: Can't find anything matching: " << patient_id
@@ -184,24 +184,24 @@ void Hospital::leave(Params params)
         return;
     }
 
-    // Asetetaan hoitojaksolle loppumispäivämäärä ja poistetaan
-    // potilas current_patients tiedoista
-
+    // Set an end date to patients careperiod and remove the patient
+    // from current_patients
     CarePeriod* care_period = get_open_period(patient_id);
     care_period->set_end_date(utils::today);
 
     this->current_patients_.erase(patient_id);
 
     std::cout << "Patient left hospital, care period closed." << std::endl;
+
 }
+
 
 void Hospital::assign_staff(Params params)
 {
-
     std::string staff_id = params.at(0);
     std::string patient_id = params.at(1);
 
-    // Jos henkilökunnan jäsentä ei löydy
+    // Staff person is not found
     if ( staff_.find(staff_id) == staff_.end() )
     {
         std::cout << "Error: Can't find anything matching: " << staff_id
@@ -209,7 +209,7 @@ void Hospital::assign_staff(Params params)
         return;
     }
 
-    // Jos potilasta ei löydy
+    // Patient is not found
     if ( this->current_patients_.find(patient_id) == this->current_patients_.end() )
     {
         std::cout << "Error: Can't find anything matching: " << patient_id
@@ -217,7 +217,7 @@ void Hospital::assign_staff(Params params)
         return;
     }
 
-    // Lisää henkilökuntaa hoitojaksolle
+    // Add staff to patients careperiod
     CarePeriod* care_period = get_open_period(patient_id);
     care_period->add_staff(staff_id, staff_[staff_id]);
 
@@ -225,13 +225,11 @@ void Hospital::assign_staff(Params params)
 }
 
 
-/// Tulostaa potilaan tiedot
 void Hospital::print_patient_info(Params params)
 {
     std::string patient_id = params.at(0);
 
-    // Jos potilaan tietoja ei löydy (potilas
-    // ei ole ollut sairaalassa)
+    // Patient has not been in the hospital
     if ( this->all_patients_.find(patient_id) == this->all_patients_.end() )
     {
         std::cout << "Error: Can't find anything matching: " << patient_id
@@ -239,7 +237,7 @@ void Hospital::print_patient_info(Params params)
         return;
     }
 
-    // Tallennetaan hoitojaksot vektoriin ja tulostetaan
+    // Saving the care periods to a vector and printing them
     std::vector<CarePeriod*> patient_periods = get_patients_periods(patient_id);
 
     for ( auto& period : patient_periods )
@@ -284,7 +282,7 @@ void Hospital::print_care_periods(Params params)
     bool found = false;
     std::string staff_id = params.at(0);
 
-    // Henkilökunnan jäsentä ei löydy
+    // Staff person is not found
     if ( this->staff_.find(staff_id) == this->staff_.end() )
     {
         std::cout << "Error: Can't find anything matching: " << staff_id
@@ -292,7 +290,7 @@ void Hospital::print_care_periods(Params params)
         return;
     }
 
-    // Tulostaa hoitojakson ja potilaan
+    // Prints the period and the patient
     for ( auto period : care_periods_ )
     {
         if (period->get_staff_().find(staff_id) != period->get_staff_().end())
@@ -304,7 +302,7 @@ void Hospital::print_care_periods(Params params)
         }
     }
 
-    // Jos henkilökunnan jäsenellä ei ole potilaita
+    // Staff person does not have any patients
     if ( !found )
     {
         std::cout << "None" << std::endl;
@@ -315,7 +313,7 @@ void Hospital::print_all_medicines(Params)
 {
     bool medicines_prescriped = false;
 
-    // Lääkkeet ja potilaat tallennetaan map-tietorakenteeseen
+    // Saves medicine and patients to a map from function
     std::map<std::string, std::vector<std::string>> patients_medicines =
             medicines_();
 
@@ -332,7 +330,7 @@ void Hospital::print_all_medicines(Params)
          medicines_prescriped = true;
     }
 
-    // Ei määrättyjä lääkkeitä
+    // No medicines prescriped
     if ( !medicines_prescriped )
     {
         std::cout << "None" << std::endl;
@@ -416,7 +414,9 @@ void Hospital::print_current_patients(Params)
      std::cout << "* Medicines:";
      patient.second->print_medicines("  - ");
      }
+
 }
+
 std::vector<CarePeriod*> Hospital::get_patients_periods(std::string patient_id)
 {
     std::vector<CarePeriod*> patients_care_periods;
@@ -462,5 +462,6 @@ std::map<std::string, std::vector<std::string>> Hospital::medicines_()
     }
     return patients_medicines;
 }
+
 
 

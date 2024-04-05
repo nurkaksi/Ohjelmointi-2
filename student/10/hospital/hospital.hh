@@ -16,22 +16,23 @@
 #include "date.hh"
 #include <map>
 
-// Virhe- ja tiedostotulosteet
-const std::string ALREADY_EXISTS = "Virhe: Jo olemassa: ";
-const std::string NOT_NUMERIC = "Virhe: Väärä parametrien tyyppi.";
-const std::string CANT_FIND = "Virhe: Ei löydy mitään vastaavaa: ";
-const std::string STAFF_RECRUITED = "Uusi henkilökunnan jäsen on rekrytoitu.";
-const std::string PATIENT_ENTERED = "Uusi potilas on saapunut.";
-const std::string PATIENT_LEFT = "Potilas poistui sairaalasta, hoitojakso suljettu.";
-const std::string MEDICINE_ADDED= "Lääke lisätty kohteelle: ";
-const std::string MEDICINE_REMOVED= "Lääke poistettu kohteelta: ";
-const std::string STAFF_ASSIGNED= "Henkilökunta määritetty kohteelle: ";
+// Error and information outputs
+const std::string ALREADY_EXISTS = "Error: Already exists: ";
+const std::string NOT_NUMERIC = "Error: Wrong type of parameters.";
+const std::string CANT_FIND = "Error: Can't find anything matching: ";
+const std::string STAFF_RECRUITED = "A new staff member has been recruited.";
+const std::string PATIENT_ENTERED = "A new patient has entered.";
+const std::string PATIENT_LEFT = "Patient left hospital, care period closed.";
+const std::string MEDICINE_ADDED= "Medicine added for: ";
+const std::string MEDICINE_REMOVED= "Medicine removed from: ";
+const std::string STAFF_ASSIGNED= "Staff assigned for: ";
 
 using Params = const std::vector<std::string>&;
 
 class Hospital
 {
 public:
+
     /**
      * @brief Hospital
      */
@@ -42,24 +43,23 @@ public:
       */
     ~Hospital();
 
-
     /**
      * @brief set_date
-     * @param params vektori, joka sisältää vastaavan komennon parametrit
+     * @param params vector containing parameters of the corresponding command
      */
     void set_date(Params params);
 
     /**
      * @brief advance_date
-     * @param params vektori, joka sisältää vastaavan komennon parametrit
-     * Siirtää nykyistä päivämäärää annetun päivien määrän verran eteenpäin.
+     * @param params vector containing parameters of the corresponding command
+     * Advances the current date with the given number of days.
      */
     void advance_date(Params params);
 
     /**
      * @brief recruit
-     * @param params vektori, joka sisältää vastaavan komennon parametrit
-     * Rekrytoi uuden henkilökunnan jäsenen (luo uuden Person-olion)
+     * @param params vector containing parameters of the corresponding command
+     * Recruits a new staff member (creates a new Person object)
      */
     void recruit(Params params);
 
@@ -70,89 +70,95 @@ public:
 
     /**
      * @brief add_medicine
-     * @param params vektori, joka sisältää vastaavan komennon parametrit
-     * Lisää annetun lääkkeen (nimi, vahvuus, annostus) annetulle potilaalle.
-     * Jos annetulla potilaalla on jo lääke,
-     * määräys (vahvuus, annostus) saattaa muuttua.
-     * Jos annetulla potilaalla on jo sama määräys samasta lääkkeestä,
-     * mitään ei tapahdu.
+     * @param params vector containing parameters of the corresponding command
+     * Adds the given medicine (name, strength, dosage) for the given patient.
+     * If the given patient already has the medicine,
+     * the prescription (strength, dosage) possibly changes.
+     * If the given patien already has the medicine with same prescription,
+     * nothing happens.
      */
     void add_medicine(Params params);
 
     /**
      * @brief remove_medicine
-     * @param params vektori, joka sisältää vastaavan komennon parametrit
-     * Poistaa annetun lääkkeen potilaalta.
-     * Jos potilaalla ei ole lääkettä, mitään ei tapahdu.
+     * @param params vector containing parameters of the corresponding command
+     * Removes the given medicine from the patient.
+     * If the patient does not have the medicine, nothing happens.
      */
     void remove_medicine(Params params);
 
+    //
+    // Commands to be implemented by students
+    //
+
     /**
      * @brief enter
-     * @param params vektori, joka sisältää vastaavan komennon parametrit
-     * Lisää potilaan sairaalaan ja luo uuden hoitojakson.
-     * Jos parametrina annettu henkilö ei ole aiemmin vieraillut sairaalassa,
-     * luo uuden henkilöolion, muussa tapauksessa lisää olemassa olevan henkilön
-     * vasta luotuun hoitojaksoon.
+     * @param params vector containing parameters of the corresponding command
+     * Adds a patient in the hospital and creates a new care period.
+     * If the person given as a parameter has never visited hospital earlier,
+     * creates a new person object, otherwise just adds an existing person
+     * in the newly created care period.
      */
     void enter(Params params);
 
     /**
      * @brief leave
-     * @param params vektori, joka sisältää vastaavan komennon parametrit
-     * Poistaa parametrina annetun henkilön sairaalasta ja sulkee
-     * henkilön hoitojakson. Hoitojakso kuitenkin edelleen olemassa.
+     * @param params vector containing parameters of the corresponding command
+     * Removes the person given as a parameter from the hospital, and closes
+     * person's care period. However, the care period still exists.
      */
     void leave(Params params);
 
     /**
      * @brief assign_staff
-     * @param params vektori, joka sisältää vastaavan komennon parametrit
-     * Määrittää annetun henkilökunnan jäsenen annetulle potilaalle.
-     * Jos potilaalla on jo henkilökunnan jäsen määritettynä
-     * (nykyisessä hoitojaksossa), mitään ei tapahdu.
+     * @param params vector containing parameters of the corresponding command
+     * Assigns the given staff member for the given patient.
+     * If the patient already has the staff member assigned
+     * (in the current care period), nothing happens.
      */
     void assign_staff(Params params);
 
     /**
      * @brief print_patient_info
-     * @param params vektori, joka sisältää vastaavan komennon parametrit
-     * Tulostaa annetun potilaan kaikki hoitojaksot ja niiden nykyiset lääkkeet,
-     * eli ne, jotka on lisätty mutta ei poistettu.
+     * @param params vector containing parameters of the corresponding command
+     * Prints the given patient's all care periods and their current medicines,
+     * i.e. those that have been added but not removed.
      */
     void print_patient_info(Params params);
 
     /**
      * @brief print_care_periods
-     * @param params vektori, joka sisältää vastaavan komennon parametrit
-     * Tulostaa annetun henkilökunnan jäsenen hoitojaksot eli ne,
-     * joissa annettu henkilökunnan jäsen on työskennellyt.
+     * @param params vector containing parameters of the corresponding command
+     * Prints the care periods of the given staff member, i.e. those
+     * care periods the given staff member has worked in.
      */
     void print_care_periods(Params params);
 
     /**
      * @brief print_all_medicines
-     * Tulostaa kaikki lääkkeet, joita on käytetty jonkin potilaan toimesta
-     * jossain vaiheessa sairaalassa käydessään, eli nykyisten ja aiempien potilaiden lääkkeet.
+     * Prints all medicines that are used by some patient visited the hospital
+     * at some time, i.e. all medicines of current and earlier patients.
      */
     void print_all_medicines(Params);
 
     /**
      * @brief print_all_patients
-     * Tulostaa kaikki sairaalassa käyneet potilaat jossain vaiheessa,
-     * eli kaikki nykyiset ja aiemmat potilaat.
-     * Tarkemmin sanottuna tulostaa jokaisen potilaan id:n ja potilastiedot
-     * (samassa muodossa kuin metodin print_patient_info tiedot).
+     * Prints all patients visited the hospital at some time, i.e. all
+     * current and earlier patients.
+     * More precisely, prints each patient's id and patient info
+     * (in the same format as the method print_patient_info).
      */
     void print_all_patients(Params);
 
     /**
      * @brief print_current_patients
-     * Tulostaa kaikki tällä hetkellä sairaalassa olevat potilaat.
-     * Tarkemmin sanottuna tulostaa jokaisen potilaan id:n ja potilastiedot
-     * (samassa muodossa kuin metodin print_patient_info tiedot).
+     * Prints all patients currently in hospital at some time.
+     * More precisely, prints each patient's id and patient info
+     * (in the same format as the method print_patient_info).
      */
     void print_current_patients(Params);
+
+
 
 
 private:
@@ -184,11 +190,8 @@ private:
      * @return medicines
      */
     std::map<std::string, std::vector<std::string>> medicines_();
-    };
+
+};
 
 #endif // HOSPITAL_HH
-
-
-
-
 
