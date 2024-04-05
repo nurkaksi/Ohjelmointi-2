@@ -2,6 +2,7 @@
 #include "utils.hh"
 #include <iostream>
 #include <set>
+#include <algorithm>
 
 Hospital::Hospital()
 {
@@ -9,16 +10,35 @@ Hospital::Hospital()
 
 Hospital::~Hospital()
 {
-    // Deallocating staff
+    //Deallocating staff map
     for( std::map<std::string, Person*>::iterator
          iter = staff_.begin();
          iter != staff_.end();
          ++iter )
     {
         delete iter->second;
+        iter->second = nullptr;
     }
 
-    // Remember to deallocate patients also
+    // Deallocating all patients map
+
+    for( std::map<std::string, Person*>::iterator
+         iter = all_patients_.begin();
+         iter != all_patients_.end();
+         ++iter )
+    {
+        delete iter->second;
+        iter->second = nullptr;
+    }
+
+    for( auto
+         iter = care_periods_.begin();
+         iter != care_periods_.end();
+         ++iter )
+    {
+        delete *iter;
+        *iter = nullptr;
+    }
 }
 
 void Hospital::set_date(Params params)
@@ -321,11 +341,126 @@ void Hospital::print_all_medicines(Params)
 
 void Hospital::print_all_patients(Params)
 {
+    // No one has been in the hospital
+    if ( all_patients_.empty() )
+    {
+        std::cout << "None" << std::endl;
+        return;
+    }
 
+    for ( auto& patient : this->all_patients_ )
+    {
+        std::vector<CarePeriod*> patient_periods =
+                get_patients_periods(patient.second->get_id());
+
+        std::cout << patient.second->get_id() << std::endl;
+        for ( auto period : patient_periods )
+        {
+            std::cout << "* Care period: ";
+            period->print_dates();
+
+            std::cout << "  - Staff:";
+            if ( period->get_staff_().empty())
+            {
+                std::cout << " None";
+            }
+            else
+            {
+            for ( auto& staff : period->get_staff_() )
+                {
+                    std::cout << " " << staff.first;
+                }
+            }
+        std::cout << std::endl;
+        }
+
+    std::cout << "* Medicines:";
+    patient.second->print_medicines("  - ");
+    }
 }
 
 void Hospital::print_current_patients(Params)
 {
+    if ( this->current_patients_.empty() )
+    {
+        std::cout << "None" << std::endl;
+        return;
+    }
 
+    for ( auto& patient : this->current_patients_ )
+    {
+        std::vector<CarePeriod*> patient_periods =
+                get_patients_periods(patient.second->get_id());
+        std::cout << patient.second->get_id() << std::endl;
+
+        for ( auto care_period : patient_periods )
+        {
+            std::cout << "* Care period: ";
+            care_period->print_dates();
+
+            std::cout << "  - Staff:";
+            if ( care_period->get_staff_().empty())
+            {
+                std::cout << " None";
+            }
+            else
+            {
+                for ( auto& staff : care_period->get_staff_() )
+                {
+                    std::cout << " " << staff.first;
+                }
+            }
+            std::cout << std::endl;
+            }
+
+     std::cout << "* Medicines:";
+     patient.second->print_medicines("  - ");
+     }
 }
+std::vector<CarePeriod*> Hospital::get_patients_periods(std::string patient_id)
+{
+    std::vector<CarePeriod*> patients_care_periods;
+    for ( auto period : this->care_periods_ )
+    {
+        if ( period->get_patient()->get_id() == patient_id )
+        {
+            patients_care_periods.push_back(period);
+        }
+    }
+    return patients_care_periods;
+}
+
+CarePeriod *Hospital::get_open_period(std::string patient_id)
+{
+    for ( auto period : this->care_periods_ )
+    {
+        if ( period->get_patient()->get_id() == patient_id )
+        {
+            return period;
+        }
+    }
+    return nullptr;
+}
+
+std::map<std::string, std::vector<std::string>> Hospital::medicines_()
+{
+    std::map<std::string, std::vector<std::string>> patients_medicines;
+    for( auto& patients : all_patients_ )
+    {
+        std::vector<std::string> medicines = patients.second->get_medicines();
+        for ( auto& medicine : medicines )
+        {
+            if ( patients_medicines.find(medicine) == patients_medicines.end() )
+            {
+                patients_medicines[medicine].push_back(patients.second->get_id());
+            }
+            else
+            {
+               patients_medicines.find(medicine)->second.push_back(patients.second->get_id());
+            }
+        }
+    }
+    return patients_medicines;
+}
+
 
