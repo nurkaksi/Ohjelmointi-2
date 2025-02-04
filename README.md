@@ -1,15 +1,3 @@
-Ohjelmointi 2: Rakenteet, kevät 2024
+Moi! Tässä mun repostorio ohjelmointi 2: Rakenteet -kurssilta. 
 
-Tämä Git-repositorio sisältää kolme hakemistoa (kansiota):
-- examples: henkilökunnan jakamat esimerkkikoodit
-- student: opiskelijan kirjoittamat koodit
-- templates: henkilökunnan jakamat koodipohjat.
-
----------------------------------------------------------------
-
-Programming 2: Structures, spring 2024
-
-This Git repository contains three directories (folders):
-- examples: example codes given by course staff
-- student: codes written by a student
-- templates: code templates given by course staff.
+Repostorio on haettu suoraan kurssin course-gitlabista, joten myös kurssimateriaalia löytyy täältä. Kannattaa suunnata student-kansioon. Sieltä löytyvät mun tekemäni koodit.
